@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0D2233">
+<title>FHC Round 2 — Attachment Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0D2233; --navy:#16324F; --teal:#0E6E73; --mint:#3FA796; --ice:#E7F1F2;
+  --amber:#B7791F; --green:#1E6B3A; --red:#9C2B2B;
+  --lgreen:#E8F3EC; --lred:#F9E9E9; --lamb:#FBF3E0; --paper:#FFFFFF; --grey:#5B6B78;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#F2F6F7;color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:70px}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif}
+a{color:var(--teal)}
+.wrap{max-width:520px;margin:0 auto;padding:0 18px}
+
+/* header */
+header{background:var(--ink);color:#fff;padding:20px 0 26px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-70px;top:-70px;width:200px;height:200px;border-radius:50%;background:rgba(14,110,115,.35)}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:#8FCBCF;font-weight:700;text-transform:uppercase}
+header h1{font-size:27px;font-weight:700;line-height:1.2;margin:8px 0 10px}
+header p{font-size:13.5px;color:#C9D8DE;max-width:34ch}
+.org{font-size:11px;color:#7E939E;margin-top:14px}
+
+/* nav chips */
+nav{position:sticky;top:0;z-index:50;background:rgba(242,246,247,.94);backdrop-filter:blur(8px);border-bottom:1px solid #DCE7EA;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav .wrap{display:flex;gap:8px;padding:10px 18px}
+nav a{flex:0 0 auto;text-decoration:none;font-size:12.5px;font-weight:600;color:var(--navy);background:#fff;border:1px solid #D6E2E5;border-radius:999px;padding:7px 13px}
+nav a:focus-visible,button:focus-visible{outline:2.5px solid var(--mint);outline-offset:2px}
+
+section{padding:30px 0 6px}
+.kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--teal);margin-bottom:6px}
+section h2{font-size:23px;font-weight:700;color:var(--navy);margin-bottom:14px;line-height:1.25}
+.card{background:var(--paper);border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(13,34,51,.08)}
+.card h3{font-size:16px;margin-bottom:6px;color:var(--navy)}
+.card p,.card li{font-size:14px;color:#33475A}
+.card ul{padding-left:18px;display:grid;gap:6px;margin-top:6px}
+.muted{color:var(--grey);font-size:12.5px;font-style:italic}
+
+/* the rule banner */
+.rule{background:var(--ink);color:#fff;text-align:center;padding:22px 18px;border-radius:var(--radius);margin-bottom:12px}
+.rule .serif{font-size:21px;font-weight:700;color:#6FD0C6;line-height:1.3}
+.rule p{font-size:12.5px;color:#C9D8DE;margin-top:8px}
+
+/* tinted cards */
+.t-ice{background:var(--ice)} .t-amb{background:var(--lamb)} .t-grn{background:var(--lgreen)} .t-red{background:var(--lred)}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px;color:#fff;margin-bottom:8px}
+
+/* findings */
+.find{display:flex;gap:12px;align-items:flex-start}
+.find .n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px}
+.find.amb .n{background:var(--amber)}
+
+/* status buckets */
+.buckets{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bucket{border-radius:var(--radius);padding:16px 12px;text-align:center}
+.bucket .code{font-family:'Fraunces',serif;font-size:34px;font-weight:700;line-height:1}
+.bucket h4{font-size:12.5px;margin:8px 0 5px;color:var(--navy)}
+.bucket p{font-size:11.5px;color:#4A5D6E;line-height:1.45}
+
+/* wizard */
+#wizard .card{min-height:230px;display:flex;flex-direction:column;justify-content:space-between}
+.wq{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);line-height:1.35;margin-bottom:8px}
+.wstep{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.whint{font-size:13px;color:var(--grey);margin-bottom:14px}
+.wbtns{display:grid;gap:9px}
+.wbtns button,.wreset{font:inherit;font-weight:600;font-size:14.5px;border:none;border-radius:11px;padding:13px;cursor:pointer}
+.byes{background:var(--teal);color:#fff}
+.bno{background:#fff;color:var(--navy);border:1.5px solid #C9D8DE!important}
+.wreset{background:var(--ice);color:var(--teal);width:100%;margin-top:10px}
+.wresult .code{font-family:'Fraunces',serif;font-size:44px;font-weight:700;line-height:1;margin-bottom:4px}
+.wresult h4{font-size:16px;color:var(--navy);margin-bottom:8px}
+.fieldrow{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid rgba(13,34,51,.08)}
+.fieldrow:last-of-type{border-bottom:none}
+.fieldrow b{color:var(--navy)} .fieldrow code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:rgba(13,34,51,.06);padding:2px 7px;border-radius:6px;color:var(--ink)}
+.wnote{font-size:12.5px;color:var(--grey);margin-top:10px}
+.blocked{color:var(--red);font-weight:600}
+
+/* field guide */
+.frow{background:#fff;border-radius:var(--radius);padding:15px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(13,34,51,.08)}
+.frow h4{font-size:14.5px;color:var(--teal);font-family:'Fraunces',serif;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.frow h4 span{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--grey);font-weight:500;white-space:nowrap}
+.frow p{font-size:13px;color:#33475A}
+
+/* bright lines toggle */
+.seg{display:flex;background:#E2ECEE;border-radius:999px;padding:4px;margin-bottom:12px}
+.seg button{flex:1;font:inherit;font-size:13.5px;font-weight:700;border:none;border-radius:999px;padding:9px;cursor:pointer;background:transparent;color:var(--grey)}
+.seg button.on.safe{background:var(--green);color:#fff}
+.seg button.on.never{background:var(--red);color:#fff}
+.blist{display:none}.blist.show{display:block}
+
+/* track */
+.trackkpi{background:var(--ink);color:#fff;border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.trackkpi .lbl{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#8FCBCF;margin-bottom:6px}
+.trackkpi p{font-family:'Fraunces',serif;font-size:16.5px;font-weight:700;line-height:1.4}
+
+/* decisions */
+.dec{display:flex;gap:12px;align-items:flex-start;background:#fff;border-radius:var(--radius);padding:15px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(13,34,51,.08)}
+.dec .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13.5px}
+.dec h4{font-size:14.5px;color:var(--navy);margin-bottom:2px}
+.dec p{font-size:12.5px;color:var(--grey)}
+
+footer{padding:26px 0 30px;text-align:center}
+footer p{font-size:11px;color:var(--grey)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">PCAT Round 2 · IPCT Expansion</div>
+    <h1>Attachment Strategy:<br>EMR Reality to DSP Compliance</h1>
+    <p>A dual-track framework that maximizes legitimate attachment, protects audit integrity, and makes interprofessional care visible to Ontario Health.</p>
+    <div class="org">Flemingdon Health Centre · Operations &amp; Integration · July 2026</div>
+  </div>
+</header>
+
+<nav aria-label="Sections"><div class="wrap">
+  <a href="#problem">Problem</a><a href="#findings">Findings</a><a href="#rule">The Rule</a><a href="#wizard">Classify ▶</a><a href="#buckets">Statuses</a><a href="#fields">Fields</a><a href="#lines">Bright Lines</a><a href="#track">Dual Track</a><a href="#narrative">Narrative</a><a href="#decisions">Decisions</a>
+</div></nav>
+
+<main class="wrap">
+
+<section id="problem">
+  <div class="kicker">Why this matters</div>
+  <h2>The Round 2 problem in one screen</h2>
+  <div class="card t-ice">
+    <h3>What Ontario Health counts</h3>
+    <ul>
+      <li>Attachment = rostered to an MD or NP (MRP) within our organization</li>
+      <li>Status 01 is the only code that scores toward the PCAP target</li>
+      <li>HCC backlog nearly cleared — the classic rostering pool is shrinking</li>
+    </ul>
+  </div>
+  <div class="card t-amb">
+    <h3>What we actually deliver</h3>
+    <ul>
+      <li>Thousands of longitudinally engaged patients in mental health, school clinics, social care, case management, psychotherapy</li>
+      <li>Coordinated interprofessional care — without physician rostering</li>
+      <li>Invisible under the target definition unless we record it deliberately</li>
+    </ul>
+  </div>
+  <p class="muted">The risk is not the definition — it is responding to it with artificial rostering. This strategy removes that pressure.</p>
+</section>
+
+<section id="findings">
+  <div class="kicker">Verified in OH's own documents</div>
+  <h2>Three findings that shape everything</h2>
+  <div class="card t-ice find"><div class="n">1</div><div>
+    <h3>First-contact date is sanctioned — one direction only</h3>
+    <p>The DSP FAQ: if an <em>attached</em> patient's rostering date is unrecorded, use the date of first contact. If the patient is <em>not</em> attached, use 999999. A date-recovery rule, never an attachment-creation rule.</p>
+  </div></div>
+  <div class="card t-ice find"><div class="n">2</div><div>
+    <h3>The status field is about our organization only</h3>
+    <p>Spec wording: report whether the patient is attached to a provider within the organization — "attachment status elsewhere is not important." 02 simply flags primary care elsewhere.</p>
+  </div></div>
+  <div class="card t-amb find amb"><div class="n">3</div><div>
+    <h3>OH's own template says "team-based"</h3>
+    <p>The 2026-27 PCAP Implementation Plan asks for "the provider type(s) responsible for attachment (e.g., MD, NP, team-based)." OH opened the language door — while the counting stays MD/NP-anchored.</p>
+  </div></div>
+</section>
+
+<section id="rule">
+  <div class="kicker">The non-negotiable</div>
+  <h2>The one rule that protects everything</h2>
+  <div class="rule">
+    <div class="serif">STATUS 01 = OPC + MD/NP (MRP) ASSIGNED</div>
+    <p>No exceptions. Enforced in the EMR: OPC cannot be saved without a populated MD/NP field.</p>
+  </div>
+  <div class="card">
+    <h3>We do not expand OPC</h3>
+    <p>Widening OPC to include team-only relationships would corrupt Track A, contaminate every legitimate 01, and hand an auditor a systemic finding.</p>
+  </div>
+  <div class="card">
+    <h3>We flag Program_Attachment instead</h3>
+    <p>Team-engaged patients carry <strong>Program_Attachment = Y</strong> plus Program_Type (multi-select). One patient record, one status, many program flags — duplication solved at the source.</p>
+  </div>
+</section>
+
+<section id="wizard">
+  <div class="kicker">Try it — the intake algorithm</div>
+  <h2>Classify a patient</h2>
+  <div class="card" id="wizCard" aria-live="polite"></div>
+  <p class="muted">The same seven-step procedure our intake staff and data clerks run — one row per patient, every month.</p>
+</section>
+
+<section id="buckets">
+  <div class="kicker">Where every patient lands</div>
+  <h2>The four statuses</h2>
+  <div class="buckets">
+    <div class="bucket t-grn"><div class="code" style="color:var(--green)">01</div><h4>Rostered to our MD / roster-taking NP</h4><p>Counts toward the PCAP target. Includes Stage 2→3 conversions dated at actual rostering.</p></div>
+    <div class="bucket t-ice"><div class="code" style="color:var(--teal)">02</div><h4>Primary care confirmed elsewhere</h4><p>School-clinic children with family MDs; navigator patients attached to partners. Submitted; no target credit; proof of reach.</p></div>
+    <div class="bucket t-amb"><div class="code" style="color:var(--amber)">03</div><h4>Program-engaged, no MD/NP anywhere</h4><p>All interprofessional clients. MRP&nbsp;-99, dates 999999. Our conversion pipeline and system-reach evidence.</p></div>
+    <div class="bucket t-red"><div class="code" style="color:var(--red)">04</div><h4>Genuinely unknown</h4><p>Use sparingly. Time-boxed to two cycles. The trend must go down.</p></div>
+  </div>
+  <p class="muted" style="margin-top:10px">Submitting a large 03 volume is required and compliant — it is how our interprofessional footprint becomes visible to Ontario Health.</p>
+</section>
+
+<section id="fields">
+  <div class="kicker">DSP Patients file</div>
+  <h2>The attachment block: exact values</h2>
+  <div class="frow"><h4>Attachment Status <span>errors 410073–74</span></h4><p>01 / 02 / 03 / 04 — two characters, leading zero ("01" not "1"). Only 01 scores.</p></div>
+  <div class="frow"><h4>Attachment Date <span>errors 410077–79</span></h4><p>YYYYMM of actual rostering. Attached but date unrecorded: first-contact date. Not attached: 999999. Never future-dated.</p></div>
+  <div class="frow"><h4>Unattached Date <span>errors 410082–85</span></h4><p>999999 while attached / never attached. De-roster or death: actual YYYYMM — must be after the Attachment Date.</p></div>
+  <div class="frow"><h4>MRP ID <span>errors 410088–91</span></h4><p>CPSO # (MD) or CNO registration (NP) for 01s; must reconcile with Staff-file MRP = Yes. All 02/03/04: -99.</p></div>
+  <p class="muted">Full 21-field mapping with validation rules lives in the companion workbook.</p>
+</section>
+
+<section id="lines">
+  <div class="kicker">Compliance</div>
+  <h2>Bright lines</h2>
+  <div class="seg" role="tablist">
+    <button class="safe on" id="segSafe" role="tab" aria-selected="true">Safe — do freely</button>
+    <button class="never" id="segNever" role="tab" aria-selected="false">Exposure — never</button>
+  </div>
+  <div class="card t-grn blist show" id="listSafe">
+    <ul>
+      <li>High 03 volumes — required, compliant, strategic</li>
+      <li>-99 and 999999 exactly as specified</li>
+      <li>First-contact date for attached patients with unrecorded roster dates (logged)</li>
+      <li>Counting arrivals from any route — no formal referral agreements needed</li>
+      <li>Penalty-free resubmission within the window</li>
+    </ul>
+  </div>
+  <div class="card t-red blist" id="listNever">
+    <ul>
+      <li>01 without OPC + MD/NP — artificial rostering</li>
+      <li>Backdating, or program-entry date as attachment date</li>
+      <li>Expanding OPC criteria to team-only relationships</li>
+      <li>Allied health flagged or entered as MRP to lift 01s</li>
+      <li>Parking patients in 04 to avoid screening; letting 04 rise</li>
+    </ul>
+  </div>
+</section>
+
+<section id="track">
+  <div class="kicker">The model</div>
+  <h2>Dual-track reporting</h2>
+  <div class="card t-ice">
+    <span class="tag" style="background:var(--teal)">Track A</span>
+    <h3>OH / DSP compliance</h3>
+    <ul><li>Three CSVs, exactly to spec, monthly and quarterly</li><li>01 count = PCAP target metric</li><li>03 count = system reach, on OH's own portal</li></ul>
+  </div>
+  <div class="card t-grn">
+    <span class="tag" style="background:var(--mint)">Track B</span>
+    <h3>System attachment (internal)</h3>
+    <ul><li>Unique patients, HCN-deduped</li><li>Program_Attachment volume + engagement matrix</li><li>Tier distribution and navigation activity</li></ul>
+  </div>
+  <div class="trackkpi">
+    <div class="lbl">The KPI that bridges both</div>
+    <p>Quarterly 03 → 01 conversion rate — the program pipeline becoming target attachment, on the record.</p>
+  </div>
+</section>
+
+<section id="narrative">
+  <div class="kicker">Positioning</div>
+  <h2>The narrative to Ontario Health — in OH's own words</h2>
+  <div class="card"><h3>PCAP template</h3><p>Asks for "provider type(s) responsible for attachment (e.g., MD, NP, team-based)" — team-based attachment is already in OH's vocabulary.</p></div>
+  <div class="card"><h3>DSP stated purpose</h3><p>Includes understanding how patients access services and highlighting broader system impact — not only counting rosters.</p></div>
+  <div class="card"><h3>Service Interactions file</h3><p>OH has signalled a future file for non-attachment activity. The reporting framework for team-based care is already coming; we are ahead of it.</p></div>
+  <div class="rule" style="text-align:left">
+    <p style="font-size:13.5px;font-style:italic;color:#E7F1F2;margin:0">"We submit 100% of our patients. Our 01s meet the definition exactly. Our 03 volume — in OH's own format — is the measured evidence of interprofessional attachment, and our conversion rate is the pipeline the definition will eventually recognize."</p>
+  </div>
+</section>
+
+<section id="decisions">
+  <div class="kicker">What we need from this table</div>
+  <h2>Five leadership decisions</h2>
+  <div class="dec"><div class="n">1</div><div><h4>Approve the EMR hard-stop</h4><p>OPC cannot be saved without a populated MD/NP field. Effective immediately.</p></div></div>
+  <div class="dec"><div class="n">2</div><div><h4>Adopt the classification algorithm</h4><p>Standard intake procedure across all seven clinic models; workbook Sheet 4 as the training artifact.</p></div></div>
+  <div class="dec"><div class="n">3</div><div><h4>Endorse Track B as an official KPI set</h4><p>Unique patients, program engagement, and quarterly 03→01 conversion reported to the board alongside DSP counts.</p></div></div>
+  <div class="dec"><div class="n">4</div><div><h4>Confirm the MRP policy</h4><p>MRP = Yes reserved for MDs and roster-taking NPs; note Schedule N after-hours obligations before expanding NP rosters.</p></div></div>
+  <div class="dec"><div class="n">5</div><div><h4>Approve the OH narrative</h4><p>The regional-anchor framing, anchored in OH's own documents, for all Ontario Health communications.</p></div></div>
+</section>
+
+</main>
+
+<footer><p>Grounded in OH's Data Specifications, DSP FAQ, error-validation guidance, submission slides, and the 2026-27 PCAP Implementation Plan.<br>Internal strategy document — no patient information contained.</p></footer>
+
+<script>
+(function(){
+  const card = document.getElementById('wizCard');
+  const F = (rows,note)=>rows.map(r=>'<div class="fieldrow"><b>'+r[0]+'</b><code>'+r[1]+'</code></div>').join('')+(note?'<p class="wnote">'+note+'</p>':'');
+  const steps = {
+    q1:{step:'Step 1 of 6 · Dedupe', q:'Does this patient (HCN, or chart # if no HCN) already have a row this cycle?', hint:'One row per patient, always.', yes:['Yes — already exists','r_merge'], no:['No — new this cycle','q2']},
+    q2:{step:'Step 2 of 6 · OPC test', q:'Is Member Status = OPC (Ongoing Primary Care client)?', hint:'', yes:['Yes','q3'], no:['No','q4']},
+    q3:{step:'Step 3 of 6 · MRP test', q:'Is the MD/NP (MRP) field populated with a roster-taking MD or NP?', hint:'', yes:['Yes','r01'], no:['No','r_block']},
+    q4:{step:'Step 4 of 6 · Elsewhere', q:'Does the patient have a family MD or NP anywhere — here or elsewhere?', hint:'Confirmed at intake screening.', yes:['Yes','r02'], no:['No','q5']},
+    q5:{step:'Step 5 of 6 · Programs', q:'Is the patient engaged in any FHC program?', hint:'Mental health, school clinic, social care, case management, psychotherapy, navigation.', yes:['Yes','r03'], no:['No / not sure','r04']}
+  };
+  const results = {
+    r_merge:{code:'—',color:'var(--teal)',title:'Merge, don\u2019t duplicate',body:'<p style="font-size:14px">Add the new program flags to the existing record. Never create a second row — this is where double counting starts.</p>'},
+    r01:{code:'01',color:'var(--green)',title:'Attached to our organization',body:F([['Attachment Status','01'],['Attachment Date','YYYYMM of rostering'],['Unattached Date','999999'],['MRP ID','CPSO / CNO reg. #']],'If the rostering date was never recorded, use first-contact date (FAQ-sanctioned) and log the substitution. Counts toward the PCAP target.')},
+    r_block:{code:'✕',color:'var(--red)',title:'Blocked — data integrity error',body:'<p style="font-size:14px" class="blocked">OPC without an MRP cannot be exported.</p><p style="font-size:13.5px;margin-top:8px">Route to the data team and fix before submission. This hard-stop is the control that protects every legitimate 01.</p>'},
+    r02:{code:'02',color:'var(--teal)',title:'Attached elsewhere',body:F([['Attachment Status','02'],['Attachment Date','999999'],['Unattached Date','999999'],['MRP ID','-99']],'Set Program_Attachment + Program_Type if enrolled in FHC programs. Submitted and visible; no target credit — proof of reach.')},
+    r03:{code:'03',color:'var(--amber)',title:'Program-engaged, unattached',body:F([['Attachment Status','03'],['Attachment Date','999999'],['Unattached Date','999999'],['MRP ID','-99'],['Program_Attachment','Y + types']],'Enters the 03 → 01 conversion pipeline review. Fully compliant — and our system-reach evidence on OH\u2019s own portal.')},
+    r04:{code:'04',color:'var(--red)',title:'Unknown — time-boxed',body:F([['Attachment Status','04'],['Attachment Date','999999'],['Unattached Date','999999'],['MRP ID','-99']],'Flag for follow-up screening; resolve to 01 / 02 / 03 within two submission cycles. A rising 04 share is itself a data-quality flag.')}
+  };
+  function renderQ(id){
+    const s = steps[id];
+    card.innerHTML = '<div><div class="wstep">'+s.step+'</div><div class="wq">'+s.q+'</div>'+(s.hint?'<div class="whint">'+s.hint+'</div>':'')+'</div>'
+      +'<div class="wbtns"><button class="byes" data-go="'+s.yes[1]+'">'+s.yes[0]+'</button><button class="bno" data-go="'+s.no[1]+'">'+s.no[0]+'</button></div>';
+    bind();
+  }
+  function renderR(id){
+    const r = results[id];
+    card.innerHTML = '<div class="wresult"><div class="code" style="color:'+r.color+'">'+r.code+'</div><h4>'+r.title+'</h4>'+r.body+'</div>'
+      +'<button class="wreset" data-go="q1">Classify another patient ↺</button>';
+    bind();
+  }
+  function bind(){
+    card.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+      const go = b.getAttribute('data-go');
+      steps[go]?renderQ(go):renderR(go);
+    }));
+  }
+  renderQ('q1');
+
+  const sS=document.getElementById('segSafe'), sN=document.getElementById('segNever');
+  const lS=document.getElementById('listSafe'), lN=document.getElementById('listNever');
+  sS.addEventListener('click',()=>{sS.classList.add('on');sN.classList.remove('on');sS.setAttribute('aria-selected','true');sN.setAttribute('aria-selected','false');lS.classList.add('show');lN.classList.remove('show');});
+  sN.addEventListener('click',()=>{sN.classList.add('on');sS.classList.remove('on');sN.setAttribute('aria-selected','true');sS.setAttribute('aria-selected','false');lN.classList.add('show');lS.classList.remove('show');});
+})();
+</script>
+</body>
+</html>
